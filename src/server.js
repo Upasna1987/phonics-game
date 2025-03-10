@@ -15,13 +15,8 @@ app.get('/', (req, res) => {
 
 // Get a random phonics word
 app.get('/api/word', (req, res) => {
-    db.get('SELECT word FROM words ORDER BY RANDOM() LIMIT 1', (err, row) => {
-        if (err) {
-            res.status(500).json({ error: err.message });
-            return;
-        }
-        res.json({ word: row ? row.word : null });
-    });
+    const wordData = db.getRandomWord();
+    res.json({ word: wordData.word });
 });
 
 app.listen(port, () => {

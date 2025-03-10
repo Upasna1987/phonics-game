@@ -1,10 +1,48 @@
 let currentWord = '';
 let displayedLetters = [];
+const synth = window.speechSynthesis;
 
 const wordDisplay = document.querySelector('.word-display');
 const letterButtons = document.querySelector('.letter-buttons');
 const message = document.querySelector('.message');
 const nextButton = document.getElementById('nextWord');
+
+// Phonetic sounds mapping
+const phoneticSounds = {
+    'a': 'ah',
+    'b': 'buh',
+    'c': 'kuh',
+    'd': 'duh',
+    'e': 'eh',
+    'f': 'fuh',
+    'g': 'guh',
+    'h': 'huh',
+    'i': 'ih',
+    'j': 'juh',
+    'k': 'kuh',
+    'l': 'luh',
+    'm': 'muh',
+    'n': 'nuh',
+    'o': 'oh',
+    'p': 'puh',
+    'q': 'kwuh',
+    'r': 'ruh',
+    's': 'sss',
+    't': 'tuh',
+    'u': 'uh',
+    'v': 'vuh',
+    'w': 'wuh',
+    'x': 'ks',
+    'y': 'yuh',
+    'z': 'zzz'
+};
+
+function speakPhoneticSound(letter) {
+    const utterance = new SpeechSynthesisUtterance(phoneticSounds[letter]);
+    utterance.rate = 0.8; // Slightly slower speed
+    utterance.pitch = 1.2; // Slightly higher pitch for clarity
+    synth.speak(utterance);
+}
 
 async function getNewWord() {
     try {
@@ -28,11 +66,25 @@ function createLetterButtons() {
     const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
     
     alphabet.forEach(letter => {
+        const buttonContainer = document.createElement('div');
+        buttonContainer.className = 'letter-container';
+        
         const button = document.createElement('button');
         button.textContent = letter;
         button.className = 'letter';
         button.addEventListener('click', () => checkLetter(letter));
-        letterButtons.appendChild(button);
+        
+        const speakerButton = document.createElement('button');
+        speakerButton.innerHTML = '🔊';
+        speakerButton.className = 'speaker-button';
+        speakerButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            speakPhoneticSound(letter);
+        });
+        
+        buttonContainer.appendChild(button);
+        buttonContainer.appendChild(speakerButton);
+        letterButtons.appendChild(buttonContainer);
     });
 }
 

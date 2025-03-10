@@ -39,6 +39,13 @@ h1 {
     margin: 20px 0;
 }
 
+.letter-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
 .letter {
     font-size: 24px;
     padding: 15px 25px;
@@ -53,6 +60,22 @@ h1 {
 .letter:hover {
     transform: scale(1.1);
     background-color: #2980b9;
+}
+
+.speaker-button {
+    font-size: 16px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #95a5a6;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.speaker-button:hover {
+    background-color: #7f8c8d;
+    transform: scale(1.1);
 }
 
 .message {
