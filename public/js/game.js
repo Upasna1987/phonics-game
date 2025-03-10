@@ -1,11 +1,19 @@
-let currentWord = '';
-let displayedLetters = [];
 const synth = window.speechSynthesis;
+let childName = '';
+let currentLetter = '';
+const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
+let currentIndex = 0;
 
-const wordDisplay = document.querySelector('.word-display');
-const letterButtons = document.querySelector('.letter-buttons');
-const message = document.querySelector('.message');
-const nextButton = document.getElementById('nextWord');
+// DOM Elements
+const nameInput = document.getElementById('nameInput');
+const gameArea = document.getElementById('gameArea');
+const childNameInput = document.getElementById('childName');
+const startGameButton = document.getElementById('startGame');
+const welcomeMessage = document.getElementById('welcomeMessage');
+const currentLetterDisplay = document.querySelector('.current-letter');
+const speakButton = document.getElementById('speakLetter');
+const rocketButton = document.getElementById('rocketButton');
+const nextButton = document.getElementById('nextLetter');
 
 // Phonetic sounds mapping
 const phoneticSounds = {
@@ -37,91 +45,65 @@ const phoneticSounds = {
     'z': 'zzz'
 };
 
+function startGame() {
+    childName = childNameInput.value.trim();
+    if (!childName) {
+        alert('Please enter the child\'s name');
+        return;
+    }
+    
+    nameInput.classList.add('hidden');
+    gameArea.classList.remove('hidden');
+    welcomeMessage.textContent = `Let's learn letters, ${childName}!`;
+    currentIndex = 0;
+    showCurrentLetter();
+}
+
+function showCurrentLetter() {
+    currentLetter = alphabet[currentIndex];
+    currentLetterDisplay.textContent = currentLetter;
+    speakPhoneticSound(currentLetter);
+}
+
 function speakPhoneticSound(letter) {
     const utterance = new SpeechSynthesisUtterance(phoneticSounds[letter]);
-    utterance.rate = 0.8; // Slightly slower speed
-    utterance.pitch = 1.2; // Slightly higher pitch for clarity
+    utterance.rate = 0.8;
+    utterance.pitch = 1.2;
     synth.speak(utterance);
 }
 
-async function getNewWord() {
-    try {
-        const response = await fetch('/api/word');
-        const data = await response.json();
-        return data.word;
-    } catch (error) {
-        console.error('Error fetching word:', error);
-        return null;
-    }
+function speakCongratulations() {
+    const messages = [
+        `Great work ${childName}, keep going!`,
+        `Excellent job ${childName}!`,
+        `Wonderful ${childName}, you're doing great!`,
+        `Amazing work ${childName}!`
+    ];
+    const message = messages[Math.floor(Math.random() * messages.length)];
+    const utterance = new SpeechSynthesisUtterance(message);
+    utterance.rate = 0.9;
+    utterance.pitch = 1.1;
+    synth.speak(utterance);
 }
 
-function displayWord(word) {
-    currentWord = word;
-    displayedLetters = Array(word.length).fill('_');
-    wordDisplay.textContent = displayedLetters.join(' ');
-}
-
-function createLetterButtons() {
-    letterButtons.innerHTML = '';
-    const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
-    
-    alphabet.forEach(letter => {
-        const buttonContainer = document.createElement('div');
-        buttonContainer.className = 'letter-container';
-        
-        const button = document.createElement('button');
-        button.textContent = letter;
-        button.className = 'letter';
-        button.addEventListener('click', () => checkLetter(letter));
-        
-        const speakerButton = document.createElement('button');
-        speakerButton.innerHTML = '🔊';
-        speakerButton.className = 'speaker-button';
-        speakerButton.addEventListener('click', (e) => {
-            e.stopPropagation();
-            speakPhoneticSound(letter);
-        });
-        
-        buttonContainer.appendChild(button);
-        buttonContainer.appendChild(speakerButton);
-        letterButtons.appendChild(buttonContainer);
+function showConfetti() {
+    confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
     });
 }
 
-function checkLetter(letter) {
-    let found = false;
-    for (let i = 0; i < currentWord.length; i++) {
-        if (currentWord[i] === letter) {
-            displayedLetters[i] = letter;
-            found = true;
-        }
-    }
-    
-    wordDisplay.textContent = displayedLetters.join(' ');
-    
-    if (found) {
-        message.textContent = "Good job!";
-        message.style.color = '#27ae60';
-    } else {
-        message.textContent = "Try again!";
-        message.style.color = '#e74c3c';
-    }
-    
-    if (displayedLetters.join('') === currentWord) {
-        message.textContent = "Excellent work, keep going!";
-        nextButton.style.display = 'block';
-    }
+function nextLetter() {
+    currentIndex = (currentIndex + 1) % alphabet.length;
+    showCurrentLetter();
 }
 
-async function startNewGame() {
-    const word = await getNewWord();
-    if (word) {
-        displayWord(word);
-        message.textContent = '';
-        nextButton.style.display = 'none';
-    }
-}
-
-nextButton.addEventListener('click', startNewGame);
-createLetterButtons();
-startNewGame(); 
+// Event Listeners
+startGameButton.addEventListener('click', startGame);
+speakButton.addEventListener('click', () => speakPhoneticSound(currentLetter));
+rocketButton.addEventListener('click', () => {
+    showConfetti();
+    speakCongratulations();
+});
+nextButton.addEventListener('click', nextLetter); 
