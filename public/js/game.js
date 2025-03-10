@@ -1,8 +1,8 @@
 const synth = window.speechSynthesis;
 let childName = '';
 let currentLetter = '';
-const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
-let currentIndex = 0;
+let alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
+let remainingLetters = [];
 
 // DOM Elements
 const nameInput = document.getElementById('nameInput');
@@ -45,6 +45,14 @@ const phoneticSounds = {
     'z': 'zzz'
 };
 
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
 function startGame() {
     childName = childNameInput.value.trim();
     if (!childName) {
@@ -55,12 +63,20 @@ function startGame() {
     nameInput.classList.add('hidden');
     gameArea.classList.remove('hidden');
     welcomeMessage.textContent = `Let's learn letters, ${childName}!`;
-    currentIndex = 0;
+    
+    // Shuffle all letters at the start
+    remainingLetters = shuffleArray([...alphabet]);
     showCurrentLetter();
 }
 
 function showCurrentLetter() {
-    currentLetter = alphabet[currentIndex];
+    // If no letters remain, reshuffle the alphabet
+    if (remainingLetters.length === 0) {
+        remainingLetters = shuffleArray([...alphabet]);
+    }
+    
+    // Get the next random letter
+    currentLetter = remainingLetters.pop();
     currentLetterDisplay.textContent = currentLetter;
     speakPhoneticSound(currentLetter);
 }
@@ -95,7 +111,6 @@ function showConfetti() {
 }
 
 function nextLetter() {
-    currentIndex = (currentIndex + 1) % alphabet.length;
     showCurrentLetter();
 }
 

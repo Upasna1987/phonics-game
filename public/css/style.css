@@ -59,25 +59,39 @@ body {
     justify-content: center;
     gap: 20px;
     margin-top: 30px;
+    align-items: center;
 }
 
-.speaker-button, .rocket-button, .next-button, #startGame {
-    font-size: 20px;
-    padding: 15px 30px;
+.speaker-button, .next-button {
+    font-size: 24px;
+    padding: 10px;
+    width: 44px;
+    height: 44px;
     border: none;
-    border-radius: 10px;
+    border-radius: 50%;
     color: white;
     cursor: pointer;
     transition: all 0.3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.rocket-button {
+    font-size: 28px;
+    padding: 20px 40px;
+    border: none;
+    border-radius: 12px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s;
+    background-color: #e74c3c;
+    text-transform: uppercase;
+    font-weight: bold;
 }
 
 .speaker-button {
     background-color: #3498db;
-}
-
-.rocket-button {
-    background-color: #e74c3c;
-    font-size: 24px;
 }
 
 .next-button {
@@ -86,6 +100,13 @@ body {
 
 #startGame {
     background-color: #9b59b6;
+    font-size: 20px;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s;
 }
 
 .speaker-button:hover, .rocket-button:hover, .next-button:hover, #startGame:hover {
